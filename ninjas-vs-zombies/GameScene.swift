@@ -9,81 +9,123 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
+    var player: Ninja!
+    var floor: SKSpriteNode!
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var leftButtonTouched: Bool = false
+    var rightButtonTouched: Bool = false
     
-    override func didMove(to view: SKView) {
-        
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
+    enum physicalBodies : UInt32 {
+        case floor = 1
+        case player = 2
     }
-    
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
+
+    override func didMove(to view: SKView)  {
+        initFloor()
+        initPlayer()
+        initControlSystem()
+        initPhysics()
     }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
+        for touch in touches {
+            let touchedNode = atPoint(touch.location(in: self))
+
+            if touchedNode.name == "leftButton" {
+                leftButtonTouched = true
+            } else if touchedNode.name == "rightButton" {
+                rightButtonTouched = true
+            }
+
+            if touchedNode.name == "jumpButton" {
+                self.player.jump()
+            }
+
+            if touchedNode.name == "attackButton" {
+                self.player.attack()
+            }
+
+            if touchedNode.name == "resetButton" {
+                self.player.reset()
+            }
+
+            if touchedNode.name == "dieButton" {
+                self.player.die()
+            }
         }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
+    func didBegin(_ contact: SKPhysicsContact) {
+        let playerHitFloor: Bool = (
+            (contact.bodyA.categoryBitMask == physicalBodies.floor.rawValue) &&
+            (contact.bodyB.categoryBitMask == physicalBodies.player.rawValue)
+        ) || (
+            (contact.bodyA.categoryBitMask == physicalBodies.player.rawValue) &&
+            (contact.bodyB.categoryBitMask == physicalBodies.floor.rawValue)
+        )
+
+        if playerHitFloor && self.player.jumpAnimationRunning {
+            self.player.beIdle()
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        if leftButtonTouched || rightButtonTouched {
+            self.player.beIdle()
+        }
+        
+        leftButtonTouched = false
+        rightButtonTouched = false
+
+        self.player.physicsBody?.velocity.dx = 0
+    }
+
+    func initFloor() {
+        floor = SKSpriteNode()
+        floor.position = CGPoint(x: self.frame.size.width / 2, y: 0)
+        floor.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.frame.size.width, height: 160))
+
+        // don't make it move
+        floor.physicsBody?.isDynamic = false
+
+        self.addChild(floor)
+    }
+
+    func initPlayer() {
+        player = Ninja(size: self.frame.size)
+
+        self.addChild(player)
+    }
+
+    func initControlSystem() {
+        let cs = ControlSystem(size: self.frame.size)
+
+        for button in cs.buttons {
+            self.addChild(button)
+        }
     }
     
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+    func initPhysics() {
+        floor.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
+        floor.physicsBody?.contactTestBitMask = physicalBodies.player.rawValue
+
+        player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
+        player.physicsBody?.contactTestBitMask = physicalBodies.floor.rawValue
     }
-    
-    
+
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+
+        if (leftButtonTouched == true) {
+            self.player.moveLeft()
+        } else if (rightButtonTouched == true) {
+            self.player.moveRight()
+        }
+    }
+
+    override func sceneDidLoad() {
+        self.physicsWorld.contactDelegate = self
     }
 }
+

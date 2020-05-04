@@ -15,6 +15,15 @@
 		FF4CEEA924605A0600D0B468 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEA724605A0600D0B468 /* Main.storyboard */; };
 		FF4CEEAB24605A0800D0B468 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEAA24605A0800D0B468 /* Assets.xcassets */; };
 		FF4CEEAE24605A0800D0B468 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEAC24605A0800D0B468 /* LaunchScreen.storyboard */; };
+		FF4CEEB624605A3B00D0B468 /* Ninja.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4CEEB524605A3B00D0B468 /* Ninja.swift */; };
+		FF4CEEB824605A5200D0B468 /* Zombie.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4CEEB724605A5200D0B468 /* Zombie.swift */; };
+		FF4CEEBA24605A6C00D0B468 /* ControlSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4CEEB924605A6C00D0B468 /* ControlSystem.swift */; };
+		FF4CEEC1246067D400D0B468 /* ninja_idle.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEBB246067D400D0B468 /* ninja_idle.atlas */; };
+		FF4CEEC2246067D400D0B468 /* ninja_run.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEBC246067D400D0B468 /* ninja_run.atlas */; };
+		FF4CEEC3246067D400D0B468 /* ninja_jump.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEBD246067D400D0B468 /* ninja_jump.atlas */; };
+		FF4CEEC4246067D400D0B468 /* ninja_climb.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEBE246067D400D0B468 /* ninja_climb.atlas */; };
+		FF4CEEC5246067D400D0B468 /* ninja_attack.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEBF246067D400D0B468 /* ninja_attack.atlas */; };
+		FF4CEEC6246067D400D0B468 /* ninja_dead.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEC0246067D400D0B468 /* ninja_dead.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +37,15 @@
 		FF4CEEAA24605A0800D0B468 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FF4CEEAD24605A0800D0B468 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FF4CEEAF24605A0800D0B468 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FF4CEEB524605A3B00D0B468 /* Ninja.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ninja.swift; sourceTree = "<group>"; };
+		FF4CEEB724605A5200D0B468 /* Zombie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zombie.swift; sourceTree = "<group>"; };
+		FF4CEEB924605A6C00D0B468 /* ControlSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlSystem.swift; sourceTree = "<group>"; };
+		FF4CEEBB246067D400D0B468 /* ninja_idle.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_idle.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_idle.atlas"; sourceTree = "<group>"; };
+		FF4CEEBC246067D400D0B468 /* ninja_run.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_run.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_run.atlas"; sourceTree = "<group>"; };
+		FF4CEEBD246067D400D0B468 /* ninja_jump.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_jump.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_jump.atlas"; sourceTree = "<group>"; };
+		FF4CEEBE246067D400D0B468 /* ninja_climb.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_climb.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_climb.atlas"; sourceTree = "<group>"; };
+		FF4CEEBF246067D400D0B468 /* ninja_attack.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_attack.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_attack.atlas"; sourceTree = "<group>"; };
+		FF4CEEC0246067D400D0B468 /* ninja_dead.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_dead.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_dead.atlas"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +78,12 @@
 		FF4CEE9C24605A0600D0B468 /* ninjas-vs-zombies */ = {
 			isa = PBXGroup;
 			children = (
+				FF4CEEBF246067D400D0B468 /* ninja_attack.atlas */,
+				FF4CEEBE246067D400D0B468 /* ninja_climb.atlas */,
+				FF4CEEC0246067D400D0B468 /* ninja_dead.atlas */,
+				FF4CEEBB246067D400D0B468 /* ninja_idle.atlas */,
+				FF4CEEBD246067D400D0B468 /* ninja_jump.atlas */,
+				FF4CEEBC246067D400D0B468 /* ninja_run.atlas */,
 				FF4CEE9D24605A0600D0B468 /* AppDelegate.swift */,
 				FF4CEE9F24605A0600D0B468 /* GameScene.sks */,
 				FF4CEEA124605A0600D0B468 /* Actions.sks */,
@@ -69,6 +93,9 @@
 				FF4CEEAA24605A0800D0B468 /* Assets.xcassets */,
 				FF4CEEAC24605A0800D0B468 /* LaunchScreen.storyboard */,
 				FF4CEEAF24605A0800D0B468 /* Info.plist */,
+				FF4CEEB524605A3B00D0B468 /* Ninja.swift */,
+				FF4CEEB724605A5200D0B468 /* Zombie.swift */,
+				FF4CEEB924605A6C00D0B468 /* ControlSystem.swift */,
 			);
 			path = "ninjas-vs-zombies";
 			sourceTree = "<group>";
@@ -131,10 +158,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FF4CEEC1246067D400D0B468 /* ninja_idle.atlas in Resources */,
+				FF4CEEC2246067D400D0B468 /* ninja_run.atlas in Resources */,
+				FF4CEEC6246067D400D0B468 /* ninja_dead.atlas in Resources */,
+				FF4CEEC4246067D400D0B468 /* ninja_climb.atlas in Resources */,
 				FF4CEEA924605A0600D0B468 /* Main.storyboard in Resources */,
 				FF4CEEA024605A0600D0B468 /* GameScene.sks in Resources */,
 				FF4CEEAB24605A0800D0B468 /* Assets.xcassets in Resources */,
 				FF4CEEAE24605A0800D0B468 /* LaunchScreen.storyboard in Resources */,
+				FF4CEEC3246067D400D0B468 /* ninja_jump.atlas in Resources */,
+				FF4CEEC5246067D400D0B468 /* ninja_attack.atlas in Resources */,
 				FF4CEEA224605A0600D0B468 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -148,7 +181,10 @@
 			files = (
 				FF4CEEA424605A0600D0B468 /* GameScene.swift in Sources */,
 				FF4CEEA624605A0600D0B468 /* GameViewController.swift in Sources */,
+				FF4CEEBA24605A6C00D0B468 /* ControlSystem.swift in Sources */,
+				FF4CEEB624605A3B00D0B468 /* Ninja.swift in Sources */,
 				FF4CEE9E24605A0600D0B468 /* AppDelegate.swift in Sources */,
+				FF4CEEB824605A5200D0B468 /* Zombie.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
