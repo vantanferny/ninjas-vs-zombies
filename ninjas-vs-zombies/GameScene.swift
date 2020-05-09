@@ -25,7 +25,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     override func didMove(to view: SKView)  {
-        initFloor()
+        initEnv()
         initPlayer()
         initZombie()
         initControlSystem()
@@ -41,39 +41,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else if touchedNode.name == "rightButton" {
                 rightButtonTouched = true
             }
-            
-            if touchedNode.name == "leftButtonTwo" {
-                leftButtonTwoTouched = true
-            } else if touchedNode.name == "rightButtonTwo" {
-                rightButtonTwoTouched = true
-            }
 
             if touchedNode.name == "jumpButton" {
-//                self.player.jump()
+                self.player.jump()
             }
 
             if touchedNode.name == "attackButton" {
-//                self.player.attack()
-                self.zombie.attack()
+                self.player.attack()
             }
 
             if touchedNode.name == "resetButton" {
-//                self.player.reset()
-                self.zombie.reset()
-            }
-
-            if touchedNode.name == "hurtButton" {
-//                self.player.die()
-                self.zombie.beHurt()
-            }
-
-            if touchedNode.name == "dieButton" {
-//                self.player.die()
-                self.zombie.die()
+                self.player.reset()
             }
         }
     }
     
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+
+        if (leftButtonTouched == true) {
+            self.player.moveLeft()
+        } else if (rightButtonTouched == true) {
+            self.player.moveRight()
+        }
+    }
+
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if leftButtonTouched || rightButtonTouched {
+            self.player.beIdle()
+        }
+        
+        leftButtonTouched = false
+        rightButtonTouched = false
+
+        self.player.physicsBody?.velocity.dx = 0
+    }
+
     func didBegin(_ contact: SKPhysicsContact) {
         let playerHitFloor: Bool = (
             (contact.bodyA.categoryBitMask == physicalBodies.floor.rawValue) &&
@@ -87,27 +91,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.player.beIdle()
         }
     }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if leftButtonTouched || rightButtonTouched || leftButtonTwoTouched || rightButtonTwoTouched {
-            self.zombie.beIdle()
-        }
+
+    func initEnv() {
+        let env = Environment(size: self.frame.size)
         
-        leftButtonTouched = false
-        rightButtonTouched = false
-        leftButtonTwoTouched = false
-        rightButtonTwoTouched = false
-
-        self.zombie.physicsBody?.velocity.dx = 0
-    }
-
-    func initFloor() {
-        floor = SKSpriteNode()
-        floor.position = CGPoint(x: self.frame.size.width / 2, y: 0)
-        floor.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.frame.size.width, height: 160))
-
-        // don't make it move
-        floor.physicsBody?.isDynamic = false
+        floor = env.floor
 
         self.addChild(floor)
     }
@@ -138,20 +126,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
         player.physicsBody?.contactTestBitMask = physicalBodies.floor.rawValue
-    }
-
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-
-        if (leftButtonTouched == true) {
-            self.zombie.walkLeft()
-        } else if (rightButtonTouched == true) {
-            self.zombie.walkRight()
-        } else if (leftButtonTwoTouched == true) {
-            self.zombie.runLeft()
-        } else if (rightButtonTwoTouched == true) {
-            self.zombie.runRight()
-        }
     }
 
     override func sceneDidLoad() {
