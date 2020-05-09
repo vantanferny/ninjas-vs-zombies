@@ -90,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if leftButtonTouched || rightButtonTouched || leftButtonTwoTouched || rightButtonTwoTouched {
-            self.player.beIdle()
+            self.zombie.beIdle()
         }
         
         leftButtonTouched = false
@@ -98,7 +98,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         leftButtonTwoTouched = false
         rightButtonTwoTouched = false
 
-        self.player.physicsBody?.velocity.dx = 0
+        self.zombie.physicsBody?.velocity.dx = 0
     }
 
     func initFloor() {

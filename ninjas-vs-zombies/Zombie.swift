@@ -15,9 +15,13 @@ class Zombie : SKNode {
     var zombieIdleAnimation: SKAction!
     var zombieWalkAnimation: SKAction!
     var zombieRunAnimation: SKAction!
+    var zombieRunningAnimation: SKAction!
     var zombieAttackAnimation: SKAction!
     var zombieHurtAnimation: SKAction!
     var zombieDieAnimation: SKAction!
+    
+    let walkingSpeed: Int = 40
+    let runningSpeed: Int = 70
     
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
@@ -41,7 +45,7 @@ class Zombie : SKNode {
             reverseHorizontalOrientation()
         }
 
-        self.physicsBody?.applyForce(CGVector(dx:-50, dy: 0))
+        self.physicsBody?.applyForce(CGVector(dx:-walkingSpeed, dy: 0))
     }
 
     func walkRight() {
@@ -51,7 +55,7 @@ class Zombie : SKNode {
             reverseHorizontalOrientation()
         }
 
-        self.physicsBody?.applyForce(CGVector(dx:50, dy: 0))
+        self.physicsBody?.applyForce(CGVector(dx:walkingSpeed, dy: 0))
     }
 
     func runLeft() {
@@ -61,7 +65,7 @@ class Zombie : SKNode {
             reverseHorizontalOrientation()
         }
 
-        self.physicsBody?.applyForce(CGVector(dx:-100, dy: 0))
+        self.physicsBody?.applyForce(CGVector(dx: -runningSpeed, dy: 0))
     }
 
     func runRight() {
@@ -71,13 +75,13 @@ class Zombie : SKNode {
             reverseHorizontalOrientation()
         }
 
-        self.physicsBody?.applyForce(CGVector(dx:100, dy: 0))
+        self.physicsBody?.applyForce(CGVector(dx: runningSpeed, dy: 0))
     }
 
     func attack() {
         walkAnimationRunning = false
         runAnimationRunning = false
-        image.size = CGSize(width: 90, height: 80)
+
         image.run(zombieAttackAnimation, completion: {() -> Void in
             self.beIdle()
         })
@@ -86,7 +90,8 @@ class Zombie : SKNode {
     func beHurt() {
         walkAnimationRunning = false
         runAnimationRunning = false
-        image.size = CGSize(width: 90, height: 80)
+
+        image.size.width = 50
         image.run(zombieHurtAnimation, completion: {() -> Void in
             self.beIdle()
         })
@@ -96,9 +101,9 @@ class Zombie : SKNode {
         walkAnimationRunning = false
         runAnimationRunning = false
 
-        image.size = CGSize(width: 80, height: 80)
+        image.size.width = 70
         image.run(zombieDieAnimation, completion: {() -> Void in
-            self.beIdle()
+            self.image.removeAllActions()
         })
     }
 
@@ -109,8 +114,10 @@ class Zombie : SKNode {
     }
 
     func beIdle() {
+        walkAnimationRunning = false
         runAnimationRunning = false
 
+        image.removeAllActions()
         image.size = CGSize(width: 40, height: 70)
         image.run(zombieIdleAnimation)
     }
@@ -127,7 +134,7 @@ class Zombie : SKNode {
         runAnimationRunning = false
 
         if !walkAnimationRunning {
-            image.size.width = 60
+            image.size.width = 40
             image.run(zombieWalkAnimation)
 
             walkAnimationRunning = true
@@ -138,8 +145,11 @@ class Zombie : SKNode {
         walkAnimationRunning = false
 
         if !runAnimationRunning {
-            image.size.width = 60
-            image.run(zombieRunAnimation)
+            image.size.width = 50
+            
+            image.run(zombieRunAnimation, completion: {() -> Void in
+                self.image.run(self.zombieRunningAnimation)
+            })
 
             runAnimationRunning = true
         }
@@ -154,7 +164,7 @@ class Zombie : SKNode {
         }
 
         zombieIdleAnimation = SKAction.repeatForever(
-            SKAction.animate(with: zombieIdleTextures, timePerFrame: 0.4)
+            SKAction.animate(with: zombieIdleTextures, timePerFrame: 0.2)
         )
         
         // Walk
@@ -163,8 +173,10 @@ class Zombie : SKNode {
         for i in 1...SKTextureAtlas(named: "zombie_1_walk").textureNames.count{
             zombieWalkTextures.append(SKTexture(imageNamed: "zombie_1_walk_\(i).png"))
         }
-
-        zombieWalkAnimation = SKAction.animate(with: zombieWalkTextures, timePerFrame: 0.1)
+        
+        zombieWalkAnimation = SKAction.repeatForever(
+            SKAction.animate(with: zombieWalkTextures, timePerFrame: 0.1)
+        )
 
         // Run
         var zombieRunTextures = [SKTexture]()
@@ -173,9 +185,22 @@ class Zombie : SKNode {
             zombieRunTextures.append(SKTexture(imageNamed: "zombie_1_run_\(i).png"))
         }
 
-        zombieRunAnimation = SKAction.repeatForever(
-            SKAction.animate(with: zombieRunTextures, timePerFrame: 0.1)
+        zombieRunAnimation = SKAction.animate(with: zombieRunTextures, timePerFrame: 0.1)
+        
+        // Running
+        
+        var zombieRunningTextures = [SKTexture]()
+
+        for i in 1...SKTextureAtlas(named: "zombie_1_run").textureNames.count{
+            if i > 5 {
+                    zombieRunningTextures.append(SKTexture(imageNamed: "zombie_1_run_\(i).png"))
+            }
+        }
+
+        zombieRunningAnimation = SKAction.repeatForever(
+            SKAction.animate(with: zombieRunningTextures, timePerFrame: 0.1)
         )
+        
 
         // Attack
         var zombieAttackTextures = [SKTexture]()
