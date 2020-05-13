@@ -95,7 +95,7 @@ class Ninja : SKNode {
     }
     
     private func initProperties(size: CGSize) {
-        defaultPosition = CGPoint(x: size.width / 2, y: size.height)
+        defaultPosition = CGPoint(x: size.width / 4, y: size.height)
 
         self.position = defaultPosition
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))

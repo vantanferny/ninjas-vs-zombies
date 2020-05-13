@@ -12,12 +12,17 @@ import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
     var zombie: Zombie!
+    var cs: ControlSystem!
     var floor: SKSpriteNode!
+    var leftWall: SKSpriteNode!
+    var rightWall: SKSpriteNode!
 
     var leftButtonTouched: Bool = false
     var rightButtonTouched: Bool = false
     var leftButtonTwoTouched: Bool = false
     var rightButtonTwoTouched: Bool = false
+    
+    let cameraNode = SKCameraNode()
     
     enum physicalBodies : UInt32 {
         case floor = 1
@@ -27,7 +32,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView)  {
         initEnv()
         initPlayer()
-        initZombie()
+//        initZombie()
+        initCamera()
         initControlSystem()
         initPhysics()
     }
@@ -38,6 +44,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             if touchedNode.name == "leftButton" {
                 leftButtonTouched = true
+                
             } else if touchedNode.name == "rightButton" {
                 rightButtonTouched = true
             }
@@ -58,11 +65,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        
+        let speed: CGFloat = 5
 
         if (leftButtonTouched == true) {
             self.player.moveLeft()
+            
+            self.cameraNode.position.x -= speed
+
+            for button in cs.buttons {
+                button.position.x -= speed
+            }
+
         } else if (rightButtonTouched == true) {
             self.player.moveRight()
+
+            self.cameraNode.position.x += speed
+            for button in cs.buttons {
+                button.position.x += speed
+            }
         }
     }
 
@@ -96,8 +117,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let env = Environment(size: self.frame.size)
         
         floor = env.floor
+        leftWall = env.leftWall
+        rightWall = env.rightWall
 
         self.addChild(floor)
+        self.addChild(leftWall)
+        self.addChild(rightWall)
     }
 
     func initPlayer() {
@@ -113,7 +138,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func initControlSystem() {
-        let cs = ControlSystem(size: self.frame.size)
+        cs = ControlSystem(size: self.frame.size)
 
         for button in cs.buttons {
             self.addChild(button)
@@ -126,6 +151,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
         player.physicsBody?.contactTestBitMask = physicalBodies.floor.rawValue
+    }
+    
+    func initCamera() {
+        cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+
+        self.camera = cameraNode
     }
 
     override func sceneDidLoad() {
