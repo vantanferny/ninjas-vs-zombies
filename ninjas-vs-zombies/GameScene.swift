@@ -13,9 +13,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
     var zombie: Zombie!
     var cs: ControlSystem!
+
     var floor: SKSpriteNode!
     var leftWall: SKSpriteNode!
     var rightWall: SKSpriteNode!
+    var background: SKSpriteNode!
+    var backgroundTwo: SKSpriteNode!
+    var crateOne: SKSpriteNode!
+    var crateTwo: SKSpriteNode!
 
     var leftButtonTouched: Bool = false
     var rightButtonTouched: Bool = false
@@ -119,10 +124,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         floor = env.floor
         leftWall = env.leftWall
         rightWall = env.rightWall
+        background = env.background
+        backgroundTwo = env.backgroundTwo
+        crateOne = env.crateOne
+        crateTwo = env.crateTwo
 
         self.addChild(floor)
         self.addChild(leftWall)
         self.addChild(rightWall)
+        self.addChild(background)
+        self.addChild(backgroundTwo)
+        self.addChild(crateOne)
+        self.addChild(crateTwo)
     }
 
     func initPlayer() {
