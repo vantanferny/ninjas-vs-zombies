@@ -28,7 +28,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var rightButtonTwoTouched: Bool = false
     
     let cameraNode = SKCameraNode()
-    
+    var cameraPlayerLock = false
+
     enum physicalBodies : UInt32 {
         case floor = 1
         case player = 2
@@ -70,29 +71,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        
-        let speed: CGFloat = 5
 
         if (leftButtonTouched == true) {
             self.player.moveLeft()
-            
-            self.cameraNode.position.x -= speed
-
-            for button in cs.buttons {
-                button.position.x -= speed
-            }
-
         } else if (rightButtonTouched == true) {
             self.player.moveRight()
+        }
 
-            self.cameraNode.position.x += speed
-            for button in cs.buttons {
-                button.position.x += speed
-            }
+        if (self.player.position.x >= self.frame.size.width / 2) && (self.player.position.x <= self.frame.size.width * 1.5) {
+            self.cameraNode.position.x = self.player.position.x
         }
     }
 
-    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if leftButtonTouched || rightButtonTouched {
             self.player.beIdle()
@@ -154,8 +144,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cs = ControlSystem(size: self.frame.size)
 
         for button in cs.buttons {
-            self.addChild(button)
+            cameraNode.addChild(button)
         }
+
+        self.addChild(cameraNode)
     }
     
     func initPhysics() {
@@ -168,7 +160,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func initCamera() {
         cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-
+        
         self.camera = cameraNode
     }
 

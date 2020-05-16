@@ -16,28 +16,30 @@ class ControlSystem {
     var jumpButton: SKSpriteNode
     var attackButton: SKSpriteNode
     var resetButton: SKSpriteNode
-    
-    let btnSize = CGSize(width: 40, height: 40)
-    let btnZPosition = 1 as CGFloat
-    let btnPositionHeight = 50 as CGFloat
 
     init(size: CGSize) {
-        let leftSide = size.width / 7
-        let rightSide = (size.width / 7) * 4
+        let halfWidth = size.width / 2
+        let halfHeight = size.height / 2
+        let leftSide = (size.width / 7) - halfWidth
+        let rightSide = ((size.width / 7) * 4) - halfWidth
+
+        let btnSize = CGSize(width: 40, height: 40)
+        let btnZPosition = 1 as CGFloat
         let btnMargin = 70 as CGFloat
+        let btnPositionHeight = 40 - halfHeight as CGFloat
 
         leftButton = SKSpriteNode(imageNamed: "btn-left")
         leftButton.name = "leftButton"
         leftButton.position = CGPoint(x: leftSide, y: btnPositionHeight)
-        
+
         jumpButton = SKSpriteNode(imageNamed: "btn-jump")
         jumpButton.name = "jumpButton"
         jumpButton.position = CGPoint(x: leftSide + btnMargin, y: btnPositionHeight)
-        
+
         rightButton = SKSpriteNode(imageNamed: "btn-right")
         rightButton.name = "rightButton"
         rightButton.position = CGPoint(x: leftSide + (btnMargin * 2), y: btnPositionHeight)
-        
+     
         attackButton = SKSpriteNode(imageNamed: "btn-attack")
         attackButton.name = "attackButton"
         attackButton.position = CGPoint(x: rightSide, y: btnPositionHeight)
