@@ -18,12 +18,15 @@ class Environment {
     
     var background : SKSpriteNode!
     var backgroundTwo : SKSpriteNode!
+    
+    var upperGround: SKNode!
 
     init(size : CGSize) {
         initFloor(size: size)
         initWalls(size: size)
         initBackground(size: size)
         initCrates(size: size)
+        initUpperGround(size: size)
     }
     
     func initFloor(size: CGSize) {
@@ -94,6 +97,44 @@ class Environment {
         crateTwo.physicsBody = SKPhysicsBody(rectangleOf: crateSize)
         crateTwo.position = CGPoint(x: size.width * (4/3), y: 105)
         crateTwo.physicsBody?.isDynamic = false
+    }
+    
+    func initUpperGround(size: CGSize) {
+        upperGround = SKNode()
+        upperGround.position = CGPoint(x: size.width * 1.7, y: size.height * (3/5))
+
+        let upperGroundTileCount = 8
+        let tileLength : Int = 40
+
+        upperGround.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: upperGroundTileCount * tileLength, height: tileLength))
+        upperGround.physicsBody?.isDynamic = false
+
+        var upperGroundTiles : Array<SKSpriteNode> = []
+        let upperGroundTileSize : CGSize = CGSize(width: tileLength, height: tileLength)
+
+        let upperGroundLeft = SKSpriteNode(imageNamed: "tile_2a")
+        upperGroundTiles.append(upperGroundLeft)
+
+        let upperGroundMidTileCount : Int = upperGroundTileCount - 2
+        for _ in 1...upperGroundMidTileCount {
+            let upperGroundMid = SKSpriteNode(imageNamed: "tile_2b")
+
+            upperGroundTiles.append(upperGroundMid)
+        }
+
+        let upperGroundRight = SKSpriteNode(imageNamed: "tile_2c")
+        upperGroundTiles.append(upperGroundRight)
+
+        var tileCount = 1
+        let startingPoint = -((upperGroundTileCount / 2) * tileLength) - (tileLength / 2)
+        for tile in upperGroundTiles {
+            tile.size = upperGroundTileSize
+            tile.position = CGPoint(x: startingPoint + (tileCount * tileLength), y: 0)
+
+            upperGround.addChild(tile)
+
+            tileCount += 1
+        }
     }
 }
 

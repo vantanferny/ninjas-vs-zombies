@@ -21,6 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var backgroundTwo: SKSpriteNode!
     var crateOne: SKSpriteNode!
     var crateTwo: SKSpriteNode!
+    var upperGround: SKNode!
 
     var leftButtonTouched: Bool = false
     var rightButtonTouched: Bool = false
@@ -118,6 +119,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         backgroundTwo = env.backgroundTwo
         crateOne = env.crateOne
         crateTwo = env.crateTwo
+        upperGround = env.upperGround
 
         self.addChild(floor)
         self.addChild(leftWall)
@@ -126,6 +128,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(backgroundTwo)
         self.addChild(crateOne)
         self.addChild(crateTwo)
+        self.addChild(upperGround)
     }
 
     func initPlayer() {
