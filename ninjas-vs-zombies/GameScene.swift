@@ -11,6 +11,8 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
+    var sword: SKNode!
+
     var zombie1: Zombie!
     var zombie2: Zombie!
     var zombie3: Zombie!
@@ -33,6 +35,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     enum physicalBodies : UInt32 {
         case floor = 1
         case player = 2
+        case weapon = 3
+        case zombie = 4
     }
 
     override func didMove(to view: SKView)  {
@@ -61,6 +65,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             if touchedNode.name == "attackButton" {
                 self.player.attack()
+                slash()
             }
 
             if touchedNode.name == "resetButton" {
@@ -95,6 +100,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func didBegin(_ contact: SKPhysicsContact) {
+        // jump stabilization
         let playerHitFloor: Bool = (
             (contact.bodyA.categoryBitMask == physicalBodies.floor.rawValue) &&
             (contact.bodyB.categoryBitMask == physicalBodies.player.rawValue)
@@ -106,6 +112,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if playerHitFloor && self.player.jumpAnimationRunning {
             self.player.beIdle()
         }
+        
+        // attack
     }
 
     func initEnv() {
@@ -158,6 +166,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func initPhysics() {
+        // main floor
         floor.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
         floor.physicsBody?.contactTestBitMask = physicalBodies.player.rawValue
         
@@ -165,15 +174,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         upperGround.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
         crateOne.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
         crateTwo.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
-
+        
+        // player
         player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
         player.physicsBody?.contactTestBitMask = physicalBodies.floor.rawValue
+        
+        // sword
+        player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
     }
     
     func initCamera() {
         cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
         
         self.camera = cameraNode
+    }
+    
+    func slash() {
+        sword = SKNode()
+        sword.position = CGPoint(x: player.position.x + (player.image.size.width / 2.6), y: self.player.position.y)
+        sword.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
+        sword.physicsBody?.isDynamic = false
+
+        self.addChild(sword)
     }
 
     override func sceneDidLoad() {
