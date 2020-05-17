@@ -26,13 +26,11 @@ class Zombie : SKNode {
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
 
-    var defaultPosition: CGPoint!
-
-    init(size : CGSize) {
+    init(position : CGPoint) {
         super.init()
 
         loadAnimations()
-        initProperties(size: size)
+        initProperties(position: position)
         initImage()
 
         self.addChild(image)
@@ -110,7 +108,6 @@ class Zombie : SKNode {
     func reset() {
         walkAnimationRunning = false
         runAnimationRunning = false
-        self.position = defaultPosition
     }
 
     func beIdle() {
@@ -121,11 +118,9 @@ class Zombie : SKNode {
         image.size = CGSize(width: 40, height: 70)
         image.run(zombieIdleAnimation)
     }
-    
-    private func initProperties(size: CGSize) {
-        defaultPosition = CGPoint(x: (size.width / 4)*3, y: size.height)
 
-        self.position = defaultPosition
+    private func initProperties(position : CGPoint) {
+        self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
     }

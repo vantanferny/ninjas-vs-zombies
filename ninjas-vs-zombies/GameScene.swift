@@ -11,17 +11,16 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
-    var zombie: Zombie!
+    var zombie1: Zombie!
+    var zombie2: Zombie!
+    var zombie3: Zombie!
+    
     var cs: ControlSystem!
 
     var floor: SKSpriteNode!
-    var leftWall: SKSpriteNode!
-    var rightWall: SKSpriteNode!
-    var background: SKSpriteNode!
-    var backgroundTwo: SKSpriteNode!
+    var upperGround: SKNode!
     var crateOne: SKSpriteNode!
     var crateTwo: SKSpriteNode!
-    var upperGround: SKNode!
 
     var leftButtonTouched: Bool = false
     var rightButtonTouched: Bool = false
@@ -39,7 +38,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView)  {
         initEnv()
         initPlayer()
-//        initZombie()
+        initZombies()
         initCamera()
         initControlSystem()
         initPhysics()
@@ -113,22 +112,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let env = Environment(size: self.frame.size)
         
         floor = env.floor
-        leftWall = env.leftWall
-        rightWall = env.rightWall
-        background = env.background
-        backgroundTwo = env.backgroundTwo
         crateOne = env.crateOne
         crateTwo = env.crateTwo
         upperGround = env.upperGround
 
         self.addChild(floor)
-        self.addChild(leftWall)
-        self.addChild(rightWall)
-        self.addChild(background)
-        self.addChild(backgroundTwo)
         self.addChild(crateOne)
         self.addChild(crateTwo)
         self.addChild(upperGround)
+
+        self.addChild(env.leftWall)
+        self.addChild(env.rightWall)
+        self.addChild(env.background)
+        self.addChild(env.backgroundTwo)
     }
 
     func initPlayer() {
@@ -137,10 +133,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(player)
     }
     
-    func initZombie() {
-        zombie = Zombie(size: self.frame.size)
+    func initZombies() {
+        let position1 = CGPoint(x: self.frame.size.width * 0.8 , y: 200)
+        let position2 = CGPoint(x: self.frame.size.width * 1.5 , y: 200)
+        let position3 = CGPoint(x: self.frame.size.width * 1.7 , y: 500)
 
-        self.addChild(zombie)
+        zombie1 = Zombie(position: position1)
+        zombie2 = Zombie(position: position2)
+        zombie3 = Zombie(position: position3)
+
+        self.addChild(zombie1)
+        self.addChild(zombie2)
+        self.addChild(zombie3)
     }
 
     func initControlSystem() {
@@ -156,6 +160,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func initPhysics() {
         floor.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
         floor.physicsBody?.contactTestBitMask = physicalBodies.player.rawValue
+        
+        // additional floor-like surfaces
+        upperGround.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
+        crateOne.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
+        crateTwo.physicsBody?.categoryBitMask = physicalBodies.floor.rawValue
 
         player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
         player.physicsBody?.contactTestBitMask = physicalBodies.floor.rawValue
