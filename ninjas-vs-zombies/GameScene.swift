@@ -194,8 +194,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sword.position = CGPoint(x: player.position.x + (player.image.size.width / 2.6), y: self.player.position.y)
         sword.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
         sword.physicsBody?.isDynamic = false
-
+        
         self.addChild(sword)
+        
+        sword.run(SKAction.sequence([
+            SKAction.wait(forDuration: 0.1),
+            SKAction.removeFromParent()
+        ]))
     }
 
     override func sceneDidLoad() {
