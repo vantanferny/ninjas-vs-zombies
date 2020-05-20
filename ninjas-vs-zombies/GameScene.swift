@@ -21,14 +21,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var rightButtonTouched: Bool = false
     
     let cameraNode = SKCameraNode()
-    var cameraPlayerLock = false
-
-    enum physicalBodies : UInt32 {
-        case floor = 1
-        case player = 2
-        case sword = 4
-        case zombie = 8
-    }
 
     override func didMove(to view: SKView)  {
         initEnv()
@@ -36,7 +28,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         initZombies()
         initCamera()
         initControlSystem()
-        initPhysics()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -94,11 +85,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         // jump stabilization
         let playerHitFloor: Bool = (
-            (contact.bodyA.categoryBitMask == physicalBodies.floor.rawValue) &&
-            (contact.bodyB.categoryBitMask == physicalBodies.player.rawValue)
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.floor.rawValue) &&
+                (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
         ) || (
-            (contact.bodyA.categoryBitMask == physicalBodies.player.rawValue) &&
-            (contact.bodyB.categoryBitMask == physicalBodies.floor.rawValue)
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+                (contact.bodyB.categoryBitMask == Physics.physicalBodies.floor.rawValue)
         )
 
         if playerHitFloor && self.player.jumpAnimationRunning {
@@ -107,18 +98,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // attack
         let swordHitZombie: Bool = (
-            (contact.bodyA.categoryBitMask == physicalBodies.zombie.rawValue) &&
-            (contact.bodyB.categoryBitMask == physicalBodies.sword.rawValue)
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
+                (contact.bodyB.categoryBitMask == Physics.physicalBodies.sword.rawValue)
         ) ||
         (
-            (contact.bodyA.categoryBitMask == physicalBodies.sword.rawValue) &&
-            (contact.bodyB.categoryBitMask == physicalBodies.zombie.rawValue)
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.sword.rawValue) &&
+                (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
         )
         
         if swordHitZombie {
             var zombie : SKPhysicsBody
 
-            if contact.bodyA.categoryBitMask == physicalBodies.zombie.rawValue {
+            if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
                 zombie = contact.bodyA
             } else {
                 zombie = contact.bodyB
@@ -135,7 +126,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let env = Environment(size: self.frame.size)
 
         for element in env.elements {
-            self.addChild(element as! SKNode)
+            self.addChild(element)
         }
     }
 
@@ -161,9 +152,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // init zombie physical properties
         for zombie in zombies {
-            zombie.physicsBody?.categoryBitMask = physicalBodies.zombie.rawValue
-            zombie.physicsBody?.collisionBitMask = physicalBodies.floor.rawValue
-            
             self.addChild(zombie)
         }
     }
@@ -176,14 +164,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
 
         self.addChild(cameraNode)
-    }
-    
-    func initPhysics() {
-        // main floor + additional floor-like services
-
-        // player
-        player.physicsBody?.categoryBitMask = physicalBodies.player.rawValue
-        player.physicsBody?.contactTestBitMask = physicalBodies.floor.rawValue
     }
 
     func initCamera() {
@@ -198,8 +178,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sword.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
         sword.physicsBody?.isDynamic = false
 
-        sword.physicsBody?.categoryBitMask = physicalBodies.sword.rawValue
-        sword.physicsBody?.contactTestBitMask = physicalBodies.zombie.rawValue
+        sword.physicsBody?.categoryBitMask = Physics.physicalBodies.sword.rawValue
+        sword.physicsBody?.contactTestBitMask = Physics.physicalBodies.zombie.rawValue
         sword.physicsBody?.collisionBitMask = 0
 
         self.addChild(sword)

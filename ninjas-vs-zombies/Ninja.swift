@@ -100,6 +100,8 @@ class Ninja : SKNode {
         self.position = defaultPosition
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
+        self.physicsBody?.categoryBitMask = Physics.physicalBodies.player.rawValue
+        self.physicsBody?.contactTestBitMask = Physics.physicalBodies.floor.rawValue
     }
     
     private func animateRunning() {

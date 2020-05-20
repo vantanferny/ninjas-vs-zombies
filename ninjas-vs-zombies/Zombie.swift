@@ -23,7 +23,7 @@ class Zombie : SKNode {
     let walkingSpeed: Int = 40
     let runningSpeed: Int = 70
     
-    var lives: Int = 2
+    var lives: Int = 100
     
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
@@ -141,6 +141,8 @@ class Zombie : SKNode {
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
+        self.physicsBody?.categoryBitMask = Physics.physicalBodies.zombie.rawValue
+        self.physicsBody?.collisionBitMask = Physics.physicalBodies.floor.rawValue
         self.name = "zombie" + String(id)
     }
     
