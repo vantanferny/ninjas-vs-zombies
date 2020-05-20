@@ -23,14 +23,16 @@ class Zombie : SKNode {
     let walkingSpeed: Int = 40
     let runningSpeed: Int = 70
     
+    var lives: Int = 2
+    
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
 
-    init(position : CGPoint) {
+    init(position : CGPoint, id : Int) {
         super.init()
 
         loadAnimations()
-        initProperties(position: position)
+        initProperties(position: position, id : id)
         initImage()
 
         self.addChild(image)
@@ -86,13 +88,29 @@ class Zombie : SKNode {
     }
     
     func beHurt() {
+        guard lives > 0 else {
+            return
+        }
+
         walkAnimationRunning = false
         runAnimationRunning = false
 
         image.size.width = 50
-        image.run(zombieHurtAnimation, completion: {() -> Void in
+        
+        let hurtSequence : SKAction = SKAction.sequence([
+            SKAction.wait(forDuration: 0.3),
+            zombieHurtAnimation
+        ])
+    
+        image.run(hurtSequence, completion: {() -> Void in
             self.beIdle()
         })
+
+        lives = lives - 1
+        
+        if lives == 0 {
+            die()
+        }
     }
 
     func die() {
@@ -119,10 +137,11 @@ class Zombie : SKNode {
         image.run(zombieIdleAnimation)
     }
 
-    private func initProperties(position : CGPoint) {
+    private func initProperties(position : CGPoint, id : Int) {
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
+        self.name = "zombie" + String(id)
     }
     
     private func animateWalking() {

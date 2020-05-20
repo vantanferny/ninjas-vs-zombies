@@ -10,16 +10,7 @@ import Foundation
 import SpriteKit
 
 class Environment {
-    var floor : SKSpriteNode!
-    var leftWall : SKSpriteNode!
-    var rightWall : SKSpriteNode!
-    var crateOne : SKSpriteNode!
-    var crateTwo : SKSpriteNode!
-    
-    var background : SKSpriteNode!
-    var backgroundTwo : SKSpriteNode!
-    
-    var upperGround: SKNode!
+    var elements : Array<SKNode> = []
 
     init(size : CGSize) {
         initFloor(size: size)
@@ -28,12 +19,15 @@ class Environment {
         initCrates(size: size)
         initUpperGround(size: size)
     }
-    
+
     func initFloor(size: CGSize) {
-        floor = SKSpriteNode()
+        let floor : SKSpriteNode = SKSpriteNode()
         floor.position = CGPoint(x: size.width, y: 0)
         floor.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: size.width * 2, height: 160))
         floor.physicsBody?.isDynamic = false
+
+        floor.physicsBody?.categoryBitMask = Physics.physicalBodies.floor.rawValue
+        floor.physicsBody?.collisionBitMask = Physics.physicalBodies.player.rawValue + Physics.physicalBodies.zombie.rawValue
         
         // tiles
         
@@ -57,50 +51,65 @@ class Environment {
             topTile.position = CGPoint(x: horizontalStart + (tileLength * count), y: topTileYPosition)
             floor.addChild(topTile)
         }
+        
+        elements.append(floor)
     }
     
     func initWalls(size: CGSize) {
-        leftWall = SKSpriteNode()
+        let leftWall = SKSpriteNode()
         leftWall.position = CGPoint(x: 0 - 5, y: size.height / 2)
         leftWall.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: size.height))
         leftWall.physicsBody?.isDynamic = false
 
-        rightWall = SKSpriteNode()
+        let rightWall = SKSpriteNode()
         rightWall.position = CGPoint(x: (size.width * 2) + 5, y: size.height / 2)
         rightWall.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: size.height))
         rightWall.physicsBody?.isDynamic = false
+        
+        elements.append(leftWall)
+        elements.append(rightWall)
     }
     
     func initBackground(size: CGSize) {
-        background = SKSpriteNode(imageNamed: "bg_night")
-        background.size = size
-        background.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        background.zPosition = -1
-        
-        backgroundTwo = SKSpriteNode(imageNamed: "bg_night")
-        backgroundTwo.size = size
-        backgroundTwo.position = CGPoint(x: size.width * 1.5, y: size.height / 2)
-        backgroundTwo.zPosition = -1
+        let startingPoint = size.width / 2
+        let widthMargin = size.width
+
+        for count in 0...1 {
+            let background = SKSpriteNode(imageNamed: "bg_night")
+            background.size = size
+            background.position = CGPoint(x: startingPoint + (CGFloat(count) * widthMargin), y: size.height / 2)
+            background.zPosition = -1
+
+            elements.append(background)
+        }
     }
     
     func initCrates(size: CGSize) {
+        let crateOne = SKSpriteNode(imageNamed: "crate")
+        crateOne.position = CGPoint(x: size.width * (2/3), y: 105)
+        
+        let crateTwo = SKSpriteNode(imageNamed: "crate")
+        crateTwo.position = CGPoint(x: size.width * (4/3), y: 105)
+
+        let crates = [
+            crateOne,
+            crateTwo,
+        ]
+        
         let crateSize : CGSize = CGSize(width: 50, height: 50)
 
-        crateOne = SKSpriteNode(imageNamed: "crate")
-        crateOne.size = crateSize
-        crateOne.physicsBody = SKPhysicsBody(rectangleOf: crateSize)
-        crateOne.position = CGPoint(x: size.width * (2/3), y: 105)
-        crateOne.physicsBody?.isDynamic = false
-        
-        crateTwo = SKSpriteNode(imageNamed: "crate")
-        crateTwo.size = crateSize
-        crateTwo.physicsBody = SKPhysicsBody(rectangleOf: crateSize)
-        crateTwo.position = CGPoint(x: size.width * (4/3), y: 105)
-        crateTwo.physicsBody?.isDynamic = false
+        for crate in crates {
+            crate.size = crateSize
+            crate.physicsBody = SKPhysicsBody(rectangleOf: crateSize)
+            crate.physicsBody?.isDynamic = false
+            crate.physicsBody?.categoryBitMask = Physics.physicalBodies.floor.rawValue
+            
+            elements.append(crate)
+        }
     }
     
     func initUpperGround(size: CGSize) {
-        upperGround = SKNode()
+        let upperGround = SKNode()
         upperGround.position = CGPoint(x: size.width * 1.7, y: size.height * (3/5))
 
         let upperGroundTileCount = 8
@@ -108,6 +117,8 @@ class Environment {
 
         upperGround.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: upperGroundTileCount * tileLength, height: tileLength))
         upperGround.physicsBody?.isDynamic = false
+        
+        upperGround.physicsBody?.categoryBitMask = Physics.physicalBodies.floor.rawValue
 
         var upperGroundTiles : Array<SKSpriteNode> = []
         let upperGroundTileSize : CGSize = CGSize(width: tileLength, height: tileLength)
@@ -135,6 +146,8 @@ class Environment {
 
             tileCount += 1
         }
+        
+        elements.append(upperGround)
     }
 }
 
