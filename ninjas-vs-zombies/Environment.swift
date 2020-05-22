@@ -58,16 +58,21 @@ class Environment {
     func initWalls(size: CGSize) {
         let leftWall = SKSpriteNode()
         leftWall.position = CGPoint(x: 0 - 5, y: size.height / 2)
-        leftWall.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: size.height))
-        leftWall.physicsBody?.isDynamic = false
 
         let rightWall = SKSpriteNode()
         rightWall.position = CGPoint(x: (size.width * 2) + 5, y: size.height / 2)
-        rightWall.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: size.height))
-        rightWall.physicsBody?.isDynamic = false
         
-        elements.append(leftWall)
-        elements.append(rightWall)
+        let walls = [
+            leftWall,
+            rightWall,
+        ]
+
+        for wall in walls {
+            wall.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: size.height * 2))
+            wall.physicsBody?.isDynamic = false
+
+            elements.append(wall)
+        }
     }
     
     func initBackground(size: CGSize) {

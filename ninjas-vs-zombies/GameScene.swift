@@ -81,11 +81,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
             (contact.bodyB.categoryBitMask == Physics.physicalBodies.floor.rawValue)
         )
-
-        if playerHitFloor && self.player.jumpAnimationRunning {
-            self.player.beIdle()
-        }
         
+        if playerHitFloor {
+            self.player.resetJumpCount()
+            
+            if self.player.jumpAnimationRunning {
+                self.player.beIdle()
+            }
+        }
+
         // attack
         let swordHitZombie: Bool = (
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&

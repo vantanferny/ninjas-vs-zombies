@@ -20,6 +20,7 @@ class Ninja : SKNode {
 
     var runAnimationRunning: Bool = false
     var jumpAnimationRunning: Bool = false
+    var jumpCount: Int = 2
 
     var defaultPosition: CGPoint!
     
@@ -57,6 +58,10 @@ class Ninja : SKNode {
     }
 
     func jump() {
+        guard jumpCount > 0 else {
+            return
+        }
+
         jumpAnimationRunning = true
 
         image.size = CGSize(width: 60, height: 80)
@@ -66,6 +71,12 @@ class Ninja : SKNode {
         })
         
         self.physicsBody?.applyImpulse(CGVector(dx:0, dy: 70))
+        
+        jumpCount = jumpCount - 1
+    }
+    
+    func resetJumpCount() {
+        jumpCount = 2
     }
 
     func attack() {
