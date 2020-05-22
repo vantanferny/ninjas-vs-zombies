@@ -27,6 +27,9 @@ class Zombie : SKNode {
     
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
+    var attackAnimationRunning: Bool = false
+    
+    var attackMode: Bool = false
 
     init(position : CGPoint, id : Int) {
         super.init()
@@ -81,12 +84,19 @@ class Zombie : SKNode {
     func attack() {
         walkAnimationRunning = false
         runAnimationRunning = false
+        
+        if attackAnimationRunning {
+            return
+        }
+
+        attackAnimationRunning = true
 
         image.run(zombieAttackAnimation, completion: {() -> Void in
             self.beIdle()
+            self.attackAnimationRunning = false
         })
     }
-    
+
     func beHurt() {
         guard lives > 0 else {
             return

@@ -81,7 +81,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
             (contact.bodyB.categoryBitMask == Physics.physicalBodies.floor.rawValue)
         )
-        
+
         if playerHitFloor {
             self.player.resetJumpCount()
             
@@ -113,6 +113,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             zombie.beHurt()
         }
+        
+        // zombie attack
+        
+        let zombieHitPlayer: Bool = (
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
+        ) ||
+        (
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
+        )
+
+        if zombieHitPlayer {
+            var body : SKPhysicsBody
+
+            if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
+                body = contact.bodyA
+            } else {
+                body = contact.bodyB
+            }
+
+            let zombie = body.node as! Zombie
+
+            zombie.attack()
+        }
     }
 
     func initEnv() {
@@ -132,7 +157,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func initZombies() {
         // add zombies by adding their positions
         let positions : Array<CGPoint> = [
-            CGPoint(x: self.frame.size.width * 0.5 , y: 200),
+            CGPoint(x: self.frame.size.width * 0.4 , y: 200),
             CGPoint(x: self.frame.size.width * 1.5 , y: 200),
             CGPoint(x: self.frame.size.width * 1.7 , y: 500)
         ]
