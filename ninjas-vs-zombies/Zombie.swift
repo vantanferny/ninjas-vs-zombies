@@ -95,19 +95,16 @@ class Zombie : SKNode {
         walkAnimationRunning = false
         runAnimationRunning = false
 
-        image.size.width = 50
-        
-        let hurtSequence : SKAction = SKAction.sequence([
-            SKAction.wait(forDuration: 0.3),
-            zombieHurtAnimation
-        ])
-    
-        image.run(hurtSequence, completion: {() -> Void in
-            self.beIdle()
+        image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
+            self.image.size.width = 50
+            self.image.run(self.zombieHurtAnimation, completion: {() -> Void in
+                self.beIdle()
+            })
         })
 
+        // life logic
         lives = lives - 1
-        
+
         if lives == 0 {
             die()
         }
