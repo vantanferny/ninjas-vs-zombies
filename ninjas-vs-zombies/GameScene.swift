@@ -174,7 +174,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func slash() {
         sword = SKNode()
-        sword.position = CGPoint(x: player.position.x + (player.image.size.width / 2.6), y: self.player.position.y)
+        
+        sword.position = CGPoint(x: player.position.x + ((player.image.size.width / 2.6) * player.xScale), y: self.player.position.y)
         sword.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
         sword.physicsBody?.isDynamic = false
 
