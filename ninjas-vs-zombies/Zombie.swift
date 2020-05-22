@@ -23,7 +23,7 @@ class Zombie : SKNode {
     let walkingSpeed: Int = 40
     let runningSpeed: Int = 70
     
-    var lives: Int = 100
+    var lives: Int = 2
     
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
@@ -94,20 +94,19 @@ class Zombie : SKNode {
 
         walkAnimationRunning = false
         runAnimationRunning = false
-
-        image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
-            self.image.size.width = 50
-            self.image.run(self.zombieHurtAnimation, completion: {() -> Void in
-                self.beIdle()
-            })
-        })
-
-        // life logic
+        
         lives = lives - 1
 
-        if lives == 0 {
-            die()
-        }
+        image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
+            if self.lives == 0 {
+                self.die()
+            } else {
+                self.image.size.width = 50
+                self.image.run(self.zombieHurtAnimation, completion: {() -> Void in
+                    self.beIdle()
+                })
+            }
+        })
     }
 
     func die() {
@@ -117,6 +116,9 @@ class Zombie : SKNode {
         image.size.width = 70
         image.run(zombieDieAnimation, completion: {() -> Void in
             self.image.removeAllActions()
+            self.image.run(SKAction.wait(forDuration: 1), completion: {() -> Void in
+                self.removeFromParent()
+            })
         })
     }
 
