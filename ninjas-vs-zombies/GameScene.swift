@@ -11,7 +11,6 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
-    var sword: SKNode!
 
     var zombies: Array<Zombie>!
     
@@ -47,8 +46,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             if touchedNode.name == "attackButton" {
                 self.player.attack()
-
-                slash()
             }
 
             if touchedNode.name == "resetButton" {
@@ -170,25 +167,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
         
         self.camera = cameraNode
-    }
-    
-    func slash() {
-        sword = SKNode()
-        
-        sword.position = CGPoint(x: player.position.x + ((player.image.size.width / 2.6) * player.xScale), y: self.player.position.y)
-        sword.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
-        sword.physicsBody?.isDynamic = false
-
-        sword.physicsBody?.categoryBitMask = Physics.physicalBodies.sword.rawValue
-        sword.physicsBody?.contactTestBitMask = Physics.physicalBodies.zombie.rawValue
-        sword.physicsBody?.collisionBitMask = 0
-
-        self.addChild(sword)
-        
-        sword.run(SKAction.sequence([
-            SKAction.wait(forDuration: 0.1),
-            SKAction.removeFromParent()
-        ]))
     }
 
     override func sceneDidLoad() {

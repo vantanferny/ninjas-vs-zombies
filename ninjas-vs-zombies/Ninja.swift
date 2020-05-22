@@ -22,6 +22,8 @@ class Ninja : SKNode {
     var jumpAnimationRunning: Bool = false
 
     var defaultPosition: CGPoint!
+    
+    var sword: SKNode!
 
     init(size : CGSize) {
         super.init()
@@ -29,6 +31,7 @@ class Ninja : SKNode {
         loadAnimations()
         initProperties(size: size)
         initImage()
+        initSword()
 
         self.addChild(image)
     }
@@ -71,6 +74,23 @@ class Ninja : SKNode {
         image.run(ninjaAttackAnimation, completion: {() -> Void in
             self.beIdle()
         })
+
+        sword.position = CGPoint(x: image.position.x + ((image.size.width / 2.6) * image.xScale), y: image.position.y)
+        self.addChild(sword)
+        sword.run(SKAction.sequence([
+            SKAction.wait(forDuration: 0.1),
+            SKAction.removeFromParent()
+        ]))
+    }
+    
+    func initSword() {
+        sword = SKNode()
+        sword.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
+        sword.physicsBody?.isDynamic = false
+        
+        sword.physicsBody?.categoryBitMask = Physics.physicalBodies.sword.rawValue
+        sword.physicsBody?.contactTestBitMask = Physics.physicalBodies.zombie.rawValue
+        sword.physicsBody?.collisionBitMask = 0
     }
 
     func die() {
