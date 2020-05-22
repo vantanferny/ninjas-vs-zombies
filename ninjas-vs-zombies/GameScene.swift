@@ -34,15 +34,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
 
             if touchedNode.name == "jumpButton" {
-                self.player.jump()
+                player.jump()
             }
 
             if touchedNode.name == "attackButton" {
-                self.player.attack()
+                player.attack()
             }
 
             if touchedNode.name == "resetButton" {
-                self.player.reset()
+                player.die()
             }
         }
     }
@@ -114,8 +114,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             zombie.beHurt()
         }
         
-        // zombie attack
-        
+        // zombie attack mode
         let zombieHitPlayer: Bool = (
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
             (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
@@ -136,7 +135,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             let zombie = body.node as! Zombie
 
-            zombie.attack()
+            zombie.initiateAttackMode()
+        }
+        
+        // zombie attack
+        let zombieAttackPlayer: Bool = (
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.hands.rawValue) &&
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
+        ) ||
+        (
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.hands.rawValue)
+        )
+
+        if zombieAttackPlayer {
+            player.die()
         }
     }
 

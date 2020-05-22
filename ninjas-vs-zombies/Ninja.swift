@@ -133,6 +133,7 @@ class Ninja : SKNode {
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = Physics.physicalBodies.player.rawValue
         self.physicsBody?.contactTestBitMask = Physics.physicalBodies.floor.rawValue + Physics.physicalBodies.zombie.rawValue
+        self.physicsBody?.collisionBitMask = Physics.physicalBodies.floor.rawValue + Physics.physicalBodies.zombie.rawValue
     }
     
     private func animateRunning() {

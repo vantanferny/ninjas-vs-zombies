@@ -30,6 +30,7 @@ class Zombie : SKNode {
     var attackAnimationRunning: Bool = false
     
     var attackMode: Bool = false
+    var hands: SKNode!
 
     init(position : CGPoint, id : Int) {
         super.init()
@@ -37,6 +38,7 @@ class Zombie : SKNode {
         loadAnimations()
         initProperties(position: position, id : id)
         initImage()
+        initHands()
 
         self.addChild(image)
     }
@@ -80,20 +82,42 @@ class Zombie : SKNode {
 
         self.physicsBody?.applyForce(CGVector(dx: runningSpeed, dy: 0))
     }
+    
+    func initiateAttackMode() {
+        attackMode = true
+        
+        attack()
+    }
 
     func attack() {
         walkAnimationRunning = false
         runAnimationRunning = false
-        
-        if attackAnimationRunning {
+
+        if attackAnimationRunning == true {
             return
         }
 
         attackAnimationRunning = true
 
-        image.run(zombieAttackAnimation, completion: {() -> Void in
-            self.beIdle()
+        // hands
+        hands.position = CGPoint(x: image.position.x + ((image.size.width / 1.8) * image.xScale), y: image.position.y)
+        self.addChild(hands)
+        hands.run(SKAction.sequence([
+            SKAction.wait(forDuration: 0.1),
+            SKAction.removeFromParent()
+        ]))
+
+        // attack animaton
+        let attackSequence = (SKAction.sequence([
+            zombieAttackAnimation,
+            SKAction.wait(forDuration: 0.5),
+        ]))
+
+        image.run(attackSequence, completion: {() -> Void in
             self.attackAnimationRunning = false
+            if self.attackMode {
+                self.attack()
+            }
         })
     }
 
@@ -225,7 +249,6 @@ class Zombie : SKNode {
         zombieRunningAnimation = SKAction.repeatForever(
             SKAction.animate(with: zombieRunningTextures, timePerFrame: 0.1)
         )
-        
 
         // Attack
         var zombieAttackTextures = [SKTexture]()
@@ -258,6 +281,16 @@ class Zombie : SKNode {
     private func initImage() {
         image = SKSpriteNode()
         beIdle()
+    }
+    
+    private func initHands() {
+        hands = SKNode()
+        hands.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 1))
+        hands.physicsBody?.isDynamic = false
+        
+        hands.physicsBody?.categoryBitMask = Physics.physicalBodies.hands.rawValue
+        hands.physicsBody?.contactTestBitMask = Physics.physicalBodies.player.rawValue
+        hands.physicsBody?.collisionBitMask = 0
     }
 
     private func reverseHorizontalOrientation() {
