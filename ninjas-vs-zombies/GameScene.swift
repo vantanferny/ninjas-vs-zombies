@@ -11,15 +11,9 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
-
     var zombies: Array<Zombie>!
-    
-    var cs: ControlSystem!
-
-    var leftButtonTouched: Bool = false
-    var rightButtonTouched: Bool = false
-    
-    let cameraNode = SKCameraNode()
+    var controlSystem: ControlSystem!
+    var cameraNode: SKCameraNode!
 
     override func didMove(to view: SKView)  {
         initEnv()
@@ -34,10 +28,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let touchedNode = atPoint(touch.location(in: self))
 
             if touchedNode.name == "leftButton" {
-                leftButtonTouched = true
+                controlSystem.leftButtonTouched = true
                 
             } else if touchedNode.name == "rightButton" {
-                rightButtonTouched = true
+                controlSystem.rightButtonTouched = true
             }
 
             if touchedNode.name == "jumpButton" {
@@ -57,9 +51,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
 
-        if (leftButtonTouched == true) {
+        if (controlSystem.leftButtonTouched == true) {
             self.player.moveLeft()
-        } else if (rightButtonTouched == true) {
+        } else if (controlSystem.rightButtonTouched == true) {
             self.player.moveRight()
         }
 
@@ -69,12 +63,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if leftButtonTouched || rightButtonTouched {
+        if controlSystem.leftButtonTouched || controlSystem.rightButtonTouched {
             self.player.beIdle()
         }
-        
-        leftButtonTouched = false
-        rightButtonTouched = false
+
+        controlSystem.leftButtonTouched = false
+        controlSystem.rightButtonTouched = false
 
         self.player.physicsBody?.velocity.dx = 0
     }
@@ -83,10 +77,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // jump stabilization
         let playerHitFloor: Bool = (
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.floor.rawValue) &&
-                (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
         ) || (
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
-                (contact.bodyB.categoryBitMask == Physics.physicalBodies.floor.rawValue)
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.floor.rawValue)
         )
 
         if playerHitFloor && self.player.jumpAnimationRunning {
@@ -96,11 +90,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // attack
         let swordHitZombie: Bool = (
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
-                (contact.bodyB.categoryBitMask == Physics.physicalBodies.sword.rawValue)
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.sword.rawValue)
         ) ||
         (
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.sword.rawValue) &&
-                (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
         )
         
         if swordHitZombie {
@@ -146,27 +140,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         zombies.append(zombie1)
         zombies.append(zombie2)
         zombies.append(zombie3)
-        
-        // init zombie physical properties
+
         for zombie in zombies {
             self.addChild(zombie)
         }
     }
+    
+    func initCamera() {
+        cameraNode = SKCameraNode()
+        cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+
+        self.camera = cameraNode
+    }
 
     func initControlSystem() {
-        cs = ControlSystem(size: self.frame.size)
+        controlSystem = ControlSystem(size: self.frame.size)
 
-        for button in cs.buttons {
+        for button in controlSystem.buttons {
             cameraNode.addChild(button)
         }
 
         self.addChild(cameraNode)
-    }
-
-    func initCamera() {
-        cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-        
-        self.camera = cameraNode
     }
 
     override func sceneDidLoad() {

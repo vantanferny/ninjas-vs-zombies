@@ -16,6 +16,9 @@ class ControlSystem {
     var jumpButton: SKSpriteNode
     var attackButton: SKSpriteNode
     var resetButton: SKSpriteNode
+    
+    var leftButtonTouched: Bool = false
+    var rightButtonTouched: Bool = false
 
     init(size: CGSize) {
         let halfWidth = size.width / 2
