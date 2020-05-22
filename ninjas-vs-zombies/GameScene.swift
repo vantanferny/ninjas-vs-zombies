@@ -11,8 +11,7 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
-    var zombies: Array<Zombie>!
-    var controlSystem: ControlSystem!
+    var cs: ControlSystem!
     var cameraNode: SKCameraNode!
 
     override func didMove(to view: SKView)  {
@@ -28,10 +27,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let touchedNode = atPoint(touch.location(in: self))
 
             if touchedNode.name == "leftButton" {
-                controlSystem.leftButtonTouched = true
+                cs.leftButtonTouched = true
                 
             } else if touchedNode.name == "rightButton" {
-                controlSystem.rightButtonTouched = true
+                cs.rightButtonTouched = true
             }
 
             if touchedNode.name == "jumpButton" {
@@ -51,9 +50,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
 
-        if (controlSystem.leftButtonTouched == true) {
+        if (cs.leftButtonTouched == true) {
             self.player.moveLeft()
-        } else if (controlSystem.rightButtonTouched == true) {
+        } else if (cs.rightButtonTouched == true) {
             self.player.moveRight()
         }
 
@@ -63,12 +62,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if controlSystem.leftButtonTouched || controlSystem.rightButtonTouched {
+        if cs.leftButtonTouched || cs.rightButtonTouched {
             self.player.beIdle()
         }
 
-        controlSystem.leftButtonTouched = false
-        controlSystem.rightButtonTouched = false
+        cs.leftButtonTouched = false
+        cs.rightButtonTouched = false
 
         self.player.physicsBody?.velocity.dx = 0
     }
@@ -96,20 +95,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             (contact.bodyA.categoryBitMask == Physics.physicalBodies.sword.rawValue) &&
             (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
         )
-        
+
         if swordHitZombie {
-            var zombie : SKPhysicsBody
+            var body : SKPhysicsBody
 
             if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
-                zombie = contact.bodyA
+                body = contact.bodyA
             } else {
-                zombie = contact.bodyB
+                body = contact.bodyB
             }
 
-            let zombieIdString : String! = zombie.node?.name?.replacingOccurrences(of: "zombie", with: "")
-            let zombieId : Int = Int(zombieIdString)!
-            
-            zombies[zombieId].beHurt()
+            let zombie = body.node as! Zombie
+
+            zombie.beHurt()
         }
     }
 
@@ -128,24 +126,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func initZombies() {
-        zombies = []
-        let position1 = CGPoint(x: self.frame.size.width * 0.5 , y: 200)
-        let position2 = CGPoint(x: self.frame.size.width * 1.5 , y: 200)
-        let position3 = CGPoint(x: self.frame.size.width * 1.7 , y: 500)
+        // add zombies by adding their positions
+        let positions : Array<CGPoint> = [
+            CGPoint(x: self.frame.size.width * 0.5 , y: 200),
+            CGPoint(x: self.frame.size.width * 1.5 , y: 200),
+            CGPoint(x: self.frame.size.width * 1.7 , y: 500)
+        ]
 
-        let zombie1 = Zombie(position: position1, id: 0)
-        let zombie2 = Zombie(position: position2, id: 1)
-        let zombie3 = Zombie(position: position3, id: 2)
+        var count = 0
+        for position in positions {
+            let zombie = Zombie(position: position, id: count)
 
-        zombies.append(zombie1)
-        zombies.append(zombie2)
-        zombies.append(zombie3)
-
-        for zombie in zombies {
             self.addChild(zombie)
+
+            count = count + 1
         }
     }
-    
+
     func initCamera() {
         cameraNode = SKCameraNode()
         cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
@@ -154,9 +151,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func initControlSystem() {
-        controlSystem = ControlSystem(size: self.frame.size)
+        cs = ControlSystem(size: self.frame.size)
 
-        for button in controlSystem.buttons {
+        for button in cs.buttons {
             cameraNode.addChild(button)
         }
 
