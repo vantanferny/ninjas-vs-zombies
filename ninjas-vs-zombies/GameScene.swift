@@ -126,6 +126,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             refreshCameraHud()
         }
+        
+        // player get life
+        let playerHitHeart: Bool = (
+            (bodyOne.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (bodyTwo.categoryBitMask == Physics.physicalBodies.heart.rawValue)
+        )
+
+        if playerHitHeart {
+            bodyTwo.node?.removeFromParent()
+
+            player.lives = player.lives + 1
+
+            hud.updateHeartCount(lifeCount: player.lives)
+
+            refreshCameraHud()
+            
+            
+        }
     }
 
     func didEnd(_ contact: SKPhysicsContact) {

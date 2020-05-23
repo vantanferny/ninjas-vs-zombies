@@ -18,6 +18,7 @@ class Environment {
         initBackground(size: size)
         initCrates(size: size)
         initUpperGround(size: size)
+        initHeart(size: size)
     }
 
     func initFloor(size: CGSize) {
@@ -153,6 +154,18 @@ class Environment {
         }
         
         elements.append(upperGround)
+    }
+    
+    func initHeart(size: CGSize) {
+        let heart: SKSpriteNode = SKSpriteNode(imageNamed: "heart")
+        heart.size = CGSize(width: 20, height: 20)
+        heart.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 30, height: 30))
+        heart.position = CGPoint(x: size.width * (5/3), y: 115)
+        heart.physicsBody?.categoryBitMask = Physics.physicalBodies.heart.rawValue
+        heart.physicsBody?.contactTestBitMask = Physics.physicalBodies.player.rawValue
+        heart.physicsBody?.isDynamic = false
+
+        elements.append(heart)
     }
 }
 

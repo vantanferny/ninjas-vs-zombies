@@ -149,7 +149,7 @@ class Ninja : SKNode {
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = Physics.physicalBodies.player.rawValue
-        self.physicsBody?.contactTestBitMask = Physics.physicalBodies.floor.rawValue + Physics.physicalBodies.zombie.rawValue
+        self.physicsBody?.contactTestBitMask = Physics.physicalBodies.floor.rawValue + Physics.physicalBodies.zombie.rawValue + Physics.physicalBodies.heart.rawValue
         self.physicsBody?.collisionBitMask = Physics.physicalBodies.floor.rawValue + Physics.physicalBodies.zombie.rawValue
     }
     

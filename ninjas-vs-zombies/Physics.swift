@@ -15,5 +15,6 @@ class Physics {
         case sword = 4
         case zombie = 8
         case hands = 16
+        case heart = 32
     }
 }
