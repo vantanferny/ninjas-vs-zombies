@@ -32,6 +32,7 @@
 		FF4CEEC6246067D400D0B468 /* ninja_dead.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEEC0246067D400D0B468 /* ninja_dead.atlas */; };
 		FF4CEED92460F1AD00D0B468 /* zombie_1_idle.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEED32460F1AD00D0B468 /* zombie_1_idle.atlas */; };
 		FF4CEEDA2460F1AD00D0B468 /* zombie_1_attack.atlas in Resources */ = {isa = PBXBuildFile; fileRef = FF4CEED42460F1AD00D0B468 /* zombie_1_attack.atlas */; };
+		FF9CF44E2478D0DF00240CE7 /* Hud.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9CF44D2478D0DF00240CE7 /* Hud.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		FF4CEEC0246067D400D0B468 /* ninja_dead.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = ninja_dead.atlas; path = "../../../Game Dev Assets/animations/ninja/ninja_dead.atlas"; sourceTree = "<group>"; };
 		FF4CEED32460F1AD00D0B468 /* zombie_1_idle.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = zombie_1_idle.atlas; path = "../../../Game Dev Assets/animations/zombie/zombie_1/zombie_1_idle.atlas"; sourceTree = "<group>"; };
 		FF4CEED42460F1AD00D0B468 /* zombie_1_attack.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = zombie_1_attack.atlas; path = "../../../Game Dev Assets/animations/zombie/zombie_1/zombie_1_attack.atlas"; sourceTree = "<group>"; };
+		FF9CF44D2478D0DF00240CE7 /* Hud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hud.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,7 @@
 				FF4CEEB924605A6C00D0B468 /* ControlSystem.swift */,
 				FF133CBC2467007300A6D337 /* Environment.swift */,
 				FF133CBE2475267700A6D337 /* Physics.swift */,
+				FF9CF44D2478D0DF00240CE7 /* Hud.swift */,
 			);
 			path = "ninjas-vs-zombies";
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				FF4CEEB624605A3B00D0B468 /* Ninja.swift in Sources */,
 				FF4CEE9E24605A0600D0B468 /* AppDelegate.swift in Sources */,
 				FF4CEEB824605A5200D0B468 /* Zombie.swift in Sources */,
+				FF9CF44E2478D0DF00240CE7 /* Hud.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

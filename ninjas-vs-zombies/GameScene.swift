@@ -12,6 +12,7 @@ import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
     var cs: ControlSystem!
+    var hud: Hud!
     var cameraNode: SKCameraNode!
 
     override func didMove(to view: SKView)  {
@@ -20,6 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         initZombies()
         initCamera()
         initControlSystem()
+        initHud()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -117,10 +119,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         )
 
         if zombieAttackPlayer {
-            player.loseLife(damage: 1)
+            let damage : Int = 1
+
+            player.loseLife(damage: damage)
+            hud.updateHeartCount(lifeCount: player.lives)
+
+            refreshCameraHud()
         }
     }
-    
+
     func didEnd(_ contact: SKPhysicsContact) {
         // body assignment
         var bodyOne : SKPhysicsBody
@@ -196,6 +203,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func initCamera() {
         cameraNode = SKCameraNode()
         cameraNode.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+        self.addChild(cameraNode)
 
         self.camera = cameraNode
     }
@@ -206,8 +214,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for button in cs.buttons {
             cameraNode.addChild(button)
         }
+    }
+    
+    func initHud() {
+        hud = Hud(size: self.size, lifeCount: player.lives)
 
-        self.addChild(cameraNode)
+        cameraNode.addChild(hud.hearts)
+    }
+    
+    func refreshCameraHud() {
+        cameraNode.childNode(withName: "hearts")?.removeFromParent()
+        cameraNode.addChild(hud.hearts)
     }
 
     override func sceneDidLoad() {
