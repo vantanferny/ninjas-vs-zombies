@@ -46,20 +46,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-
-        if (cs.leftButtonTouched == true) {
-            self.player.moveLeft()
-        } else if (cs.rightButtonTouched == true) {
-            self.player.moveRight()
-        }
-
-        if (self.player.position.x >= self.frame.size.width / 2) && (self.player.position.x <= self.frame.size.width * 1.5) {
-            self.cameraNode.position.x = self.player.position.x
-        }
-    }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if cs.leftButtonTouched || cs.rightButtonTouched {
@@ -150,6 +136,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if zombieAttackPlayer {
             player.die()
+        }
+    }
+    
+    func didEnd(_ contact: SKPhysicsContact) {
+        // zombie attack mode off
+        let zombieHitPlayer: Bool = (
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
+        ) ||
+        (
+            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
+        )
+
+        if zombieHitPlayer {
+            var body : SKPhysicsBody
+
+            if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
+                body = contact.bodyA
+            } else {
+                body = contact.bodyB
+            }
+
+            let zombie = body.node as! Zombie
+
+            zombie.attackMode = false
+        }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+
+        if (cs.leftButtonTouched == true) {
+            self.player.moveLeft()
+        } else if (cs.rightButtonTouched == true) {
+            self.player.moveRight()
+        }
+
+        if (self.player.position.x >= self.frame.size.width / 2) && (self.player.position.x <= self.frame.size.width * 1.5) {
+            self.cameraNode.position.x = self.player.position.x
         }
     }
 
