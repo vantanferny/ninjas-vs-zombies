@@ -59,13 +59,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
 
     func didBegin(_ contact: SKPhysicsContact) {
+        // body assignments
+        var bodyOne : SKPhysicsBody
+        var bodyTwo : SKPhysicsBody
+        
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            bodyOne = contact.bodyA
+            bodyTwo = contact.bodyB
+        } else {
+            bodyOne = contact.bodyB
+            bodyTwo = contact.bodyA
+        }
+
+        // interactions
         // jump stabilization
         let playerHitFloor: Bool = (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.floor.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
-        ) || (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.floor.rawValue)
+            (bodyOne.categoryBitMask == Physics.physicalBodies.floor.rawValue) &&
+            (bodyTwo.categoryBitMask == Physics.physicalBodies.player.rawValue)
         )
 
         if playerHitFloor {
@@ -78,60 +88,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         // attack
         let swordHitZombie: Bool = (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.sword.rawValue)
-        ) ||
-        (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.sword.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
+            (bodyOne.categoryBitMask == Physics.physicalBodies.sword.rawValue) &&
+            (bodyTwo.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
         )
 
         if swordHitZombie {
-            var body : SKPhysicsBody
-
-            if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
-                body = contact.bodyA
-            } else {
-                body = contact.bodyB
-            }
-
-            let zombie = body.node as! Zombie
+            let zombie = bodyTwo.node as! Zombie
 
             zombie.beHurt()
         }
         
         // zombie attack mode
         let zombieHitPlayer: Bool = (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
-        ) ||
-        (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
+            (bodyOne.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (bodyTwo.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
         )
 
         if zombieHitPlayer {
-            var body : SKPhysicsBody
-
-            if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
-                body = contact.bodyA
-            } else {
-                body = contact.bodyB
-            }
-
-            let zombie = body.node as! Zombie
+            let zombie = bodyTwo.node as! Zombie
 
             zombie.initiateAttackMode()
         }
         
         // zombie attack
         let zombieAttackPlayer: Bool = (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.hands.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
-        ) ||
-        (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.hands.rawValue)
+            (bodyOne.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (bodyTwo.categoryBitMask == Physics.physicalBodies.hands.rawValue)
         )
 
         if zombieAttackPlayer {
@@ -140,26 +122,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didEnd(_ contact: SKPhysicsContact) {
-        // zombie attack mode off
-        let zombieHitPlayer: Bool = (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.player.rawValue)
-        ) ||
-        (
-            (contact.bodyA.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
-            (contact.bodyB.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
+        // body assignment
+        var bodyOne : SKPhysicsBody
+        var bodyTwo : SKPhysicsBody
+        
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            bodyOne = contact.bodyA
+            bodyTwo = contact.bodyB
+        } else {
+            bodyOne = contact.bodyB
+            bodyTwo = contact.bodyA
+        }
+
+        // interactions
+        let zombieStopHittingPlayer: Bool = (
+            (bodyOne.categoryBitMask == Physics.physicalBodies.player.rawValue) &&
+            (bodyTwo.categoryBitMask == Physics.physicalBodies.zombie.rawValue)
         )
 
-        if zombieHitPlayer {
-            var body : SKPhysicsBody
-
-            if contact.bodyA.categoryBitMask == Physics.physicalBodies.zombie.rawValue {
-                body = contact.bodyA
-            } else {
-                body = contact.bodyB
-            }
-
-            let zombie = body.node as! Zombie
+        if zombieStopHittingPlayer {
+            let zombie = bodyTwo.node as! Zombie
 
             zombie.attackMode = false
         }
