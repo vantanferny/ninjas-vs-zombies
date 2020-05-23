@@ -34,20 +34,37 @@ class Zombie : SKNode {
     var attackMode: Bool = false
     var hands: SKNode!
 
+    var patrolMode: Bool = false
     var leftEnd: CGFloat!
     var rightEnd: CGFloat!
 
-    init(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat) {
+    init(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat, patrolMode: Bool) {
         super.init()
 
         loadAnimations()
-        initProperties(position: position, leftEnd: leftEnd, rightEnd: rightEnd)
+        initProperties(position: position, leftEnd: leftEnd, rightEnd: rightEnd, patrolMode: patrolMode)
         initImage()
         initHands()
 
         self.addChild(image)
     }
     
+    func patrol() {
+        if self.xScale > 0{
+            walkRight()
+            
+            if self.position.x >= rightEnd {
+                walkLeft()
+            }
+        } else {
+            walkLeft()
+
+            if self.position.x <= leftEnd {
+                walkRight()
+            }
+        }
+    }
+
     func walkLeft() {
         animateWalking()
 
@@ -88,9 +105,15 @@ class Zombie : SKNode {
         self.physicsBody?.applyForce(CGVector(dx: runningSpeed, dy: 0))
     }
     
+    func initiatePatrolMode() {
+        attackMode = false
+        patrolMode = true
+    }
+    
     func initiateAttackMode() {
         attackMode = true
-        
+        patrolMode = false
+
         attack()
     }
 
@@ -190,13 +213,14 @@ class Zombie : SKNode {
         image.run(zombieIdleAnimation)
     }
 
-    private func initProperties(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat) {
+    private func initProperties(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat, patrolMode: Bool) {
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = Physics.physicalBodies.zombie.rawValue
         self.physicsBody?.collisionBitMask = Physics.physicalBodies.floor.rawValue
-        
+
+        self.patrolMode = patrolMode
         self.leftEnd = leftEnd
         self.rightEnd = rightEnd
     }

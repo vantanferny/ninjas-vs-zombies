@@ -11,6 +11,7 @@ import GameplayKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     var player: Ninja!
+    var zombies: Array<Zombie>!
     var cs: ControlSystem!
     var hud: Hud!
     var cameraNode: SKCameraNode!
@@ -123,7 +124,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             player.loseLife(damage: damage)
             hud.updateHeartCount(lifeCount: player.lives)
-
             refreshCameraHud()
         }
         
@@ -137,12 +137,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bodyTwo.node?.removeFromParent()
 
             player.lives = player.lives + 1
-
             hud.updateHeartCount(lifeCount: player.lives)
-
             refreshCameraHud()
-            
-            
         }
     }
 
@@ -168,7 +164,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if zombieStopHittingPlayer {
             let zombie = bodyTwo.node as! Zombie
 
-            zombie.attackMode = false
+            zombie.initiatePatrolMode()
         }
     }
     
@@ -183,6 +179,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if (self.player.position.x >= self.frame.size.width / 2) && (self.player.position.x <= self.frame.size.width * 1.5) {
             self.cameraNode.position.x = self.player.position.x
+        }
+        
+        for zombie in zombies {
+            if zombie.patrolMode {
+                zombie.patrol()
+            }
         }
     }
 
@@ -201,27 +203,38 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func initZombies() {
+        zombies = []
         // add zombies by adding their positions
         let positions : Array<Array<Any>> = [
             [
-                CGPoint(x: self.frame.size.width * 0.4 , y: 200),
+                CGPoint(x: self.frame.size.width * 0.9 , y: 200),
                 CGFloat(545),
                 CGFloat(921),
+                true,
             ],
             [
                 CGPoint(x: self.frame.size.width * 1.5 , y: 200),
                 CGFloat(1038),
                 CGFloat(1433),
+                false,
             ],
             [
                 CGPoint(x: self.frame.size.width * 1.7 , y: 500),
                 CGFloat(1122),
                 CGFloat(1376),
+                false,
             ],
         ]
 
         for position in positions {
-            let zombie = Zombie(position: position[0] as! CGPoint, leftEnd: position[1] as! CGFloat, rightEnd: position[2] as! CGFloat)
+            let zombie = Zombie(
+                position: position[0] as! CGPoint,
+                leftEnd: position[1] as! CGFloat,
+                rightEnd: position[2] as! CGFloat,
+                patrolMode: position[3] as! Bool
+            )
+
+            zombies.append(zombie)
 
             self.addChild(zombie)
         }
