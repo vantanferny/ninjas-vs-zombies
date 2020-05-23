@@ -27,7 +27,9 @@ class Zombie : SKNode {
     
     var walkAnimationRunning: Bool = false
     var runAnimationRunning: Bool = false
+    var hurtAnimationRunning: Bool = false
     var attackAnimationRunning: Bool = false
+    var dieAnimationRunning: Bool = false
     
     var attackMode: Bool = false
     var hands: SKNode!
@@ -93,7 +95,7 @@ class Zombie : SKNode {
         walkAnimationRunning = false
         runAnimationRunning = false
 
-        if attackAnimationRunning == true {
+        if attackAnimationRunning == true || hurtAnimationRunning == true {
             return
         }
 
@@ -128,28 +130,42 @@ class Zombie : SKNode {
 
         walkAnimationRunning = false
         runAnimationRunning = false
-        
+
         lives = lives - 1
 
-        image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
-            if self.lives == 0 {
+        if lives == 0 {
+            image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
                 self.die()
-            } else {
+            })
+        } else {
+            image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
+                guard !self.hurtAnimationRunning else {
+                    return
+                }
+                
+                self.hurtAnimationRunning = true
+
                 self.image.size.width = 50
                 self.image.run(self.zombieHurtAnimation, completion: {() -> Void in
                     self.beIdle()
                 })
-            }
-        })
+            })
+        }
     }
 
     func die() {
         walkAnimationRunning = false
         runAnimationRunning = false
 
+        guard !dieAnimationRunning else {
+            return
+        }
+        dieAnimationRunning = true
+
+        image.removeAllActions()
         image.size.width = 70
+
         image.run(zombieDieAnimation, completion: {() -> Void in
-            self.image.removeAllActions()
             self.image.run(SKAction.wait(forDuration: 1), completion: {() -> Void in
                 self.removeFromParent()
             })
@@ -164,6 +180,7 @@ class Zombie : SKNode {
     func beIdle() {
         walkAnimationRunning = false
         runAnimationRunning = false
+        hurtAnimationRunning = false
 
         image.removeAllActions()
         image.size = CGSize(width: 40, height: 70)
