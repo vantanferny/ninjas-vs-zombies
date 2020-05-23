@@ -24,6 +24,8 @@ class Ninja : SKNode {
 
     var defaultPosition: CGPoint!
     
+    var lives = 3
+
     var sword: SKNode!
 
     init(size : CGSize) {
@@ -103,13 +105,28 @@ class Ninja : SKNode {
         sword.physicsBody?.contactTestBitMask = Physics.physicalBodies.zombie.rawValue
         sword.physicsBody?.collisionBitMask = 0
     }
+    
+    func loseLife(damage: Int) {
+        guard lives > 0 else {
+            return
+        }
+
+        lives = lives - damage
+
+        if lives < 1 {
+            die()
+        }
+    }
 
     func die() {
         runAnimationRunning = false
 
         image.size = CGSize(width: 80, height: 80)
         image.run(ninjaDieAnimation, completion: {() -> Void in
-            self.beIdle()
+            self.image.removeAllActions()
+            self.image.run(SKAction.wait(forDuration: 1), completion: {() -> Void in
+                self.removeFromParent()
+            })
         })
     }
 

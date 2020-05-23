@@ -117,7 +117,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         )
 
         if zombieAttackPlayer {
-            player.die()
+            player.loseLife(damage: 1)
         }
     }
     
