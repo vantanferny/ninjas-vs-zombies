@@ -202,19 +202,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func initZombies() {
         // add zombies by adding their positions
-        let positions : Array<CGPoint> = [
-            CGPoint(x: self.frame.size.width * 0.4 , y: 200),
-            CGPoint(x: self.frame.size.width * 1.5 , y: 200),
-            CGPoint(x: self.frame.size.width * 1.7 , y: 500)
+        let positions : Array<Array<Any>> = [
+            [
+                CGPoint(x: self.frame.size.width * 0.4 , y: 200),
+                CGFloat(545),
+                CGFloat(921),
+            ],
+            [
+                CGPoint(x: self.frame.size.width * 1.5 , y: 200),
+                CGFloat(1038),
+                CGFloat(1433),
+            ],
+            [
+                CGPoint(x: self.frame.size.width * 1.7 , y: 500),
+                CGFloat(1122),
+                CGFloat(1376),
+            ],
         ]
 
-        var count = 0
         for position in positions {
-            let zombie = Zombie(position: position, id: count)
+            let zombie = Zombie(position: position[0] as! CGPoint, leftEnd: position[1] as! CGFloat, rightEnd: position[2] as! CGFloat)
 
             self.addChild(zombie)
-
-            count = count + 1
         }
     }
 

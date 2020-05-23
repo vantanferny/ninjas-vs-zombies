@@ -34,11 +34,14 @@ class Zombie : SKNode {
     var attackMode: Bool = false
     var hands: SKNode!
 
-    init(position : CGPoint, id : Int) {
+    var leftEnd: CGFloat!
+    var rightEnd: CGFloat!
+
+    init(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat) {
         super.init()
 
         loadAnimations()
-        initProperties(position: position, id : id)
+        initProperties(position: position, leftEnd: leftEnd, rightEnd: rightEnd)
         initImage()
         initHands()
 
@@ -187,15 +190,17 @@ class Zombie : SKNode {
         image.run(zombieIdleAnimation)
     }
 
-    private func initProperties(position : CGPoint, id : Int) {
+    private func initProperties(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat) {
         self.position = position
         self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 40, height: 70))
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.categoryBitMask = Physics.physicalBodies.zombie.rawValue
         self.physicsBody?.collisionBitMask = Physics.physicalBodies.floor.rawValue
-        self.name = "zombie" + String(id)
+        
+        self.leftEnd = leftEnd
+        self.rightEnd = rightEnd
     }
-    
+
     private func animateWalking() {
         runAnimationRunning = false
 
