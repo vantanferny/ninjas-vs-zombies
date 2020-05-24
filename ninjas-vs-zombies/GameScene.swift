@@ -109,8 +109,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if zombieHitPlayer {
             let zombie = bodyTwo.node as! Zombie
+            let facingRight : Bool = zombie.position.x < player.position.x
 
-            zombie.initiateAttackMode()
+            zombie.initiateAttackMode(facingRight: facingRight)
         }
         
         // zombie attack

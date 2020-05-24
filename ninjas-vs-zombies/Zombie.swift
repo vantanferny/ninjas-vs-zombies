@@ -110,9 +110,12 @@ class Zombie : SKNode {
         patrolMode = true
     }
     
-    func initiateAttackMode() {
+    func initiateAttackMode(facingRight: Bool) {
         attackMode = true
         patrolMode = false
+        if ((facingRight && self.xScale < 0) || (!facingRight && self.xScale > 0)) {
+            reverseHorizontalOrientation()
+        }
 
         attack()
     }
@@ -128,7 +131,8 @@ class Zombie : SKNode {
         attackAnimationRunning = true
 
         // hands
-        hands.position = CGPoint(x: image.position.x + ((image.size.width / 1.8) * image.xScale), y: image.position.y)
+        hands.position = CGPoint(x: image.position.x + (image.size.width / 1.8), y: image.position.y)
+
         let handsAttackSequence = SKAction.sequence([
             SKAction.wait(forDuration: 0.1),
             SKAction.removeFromParent()
@@ -168,6 +172,7 @@ class Zombie : SKNode {
         lives = lives - 1
 
         if lives == 0 {
+            patrolMode = false
             image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
                 self.die()
             })
