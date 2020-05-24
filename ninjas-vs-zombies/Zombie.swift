@@ -129,16 +129,20 @@ class Zombie : SKNode {
 
         // hands
         hands.position = CGPoint(x: image.position.x + ((image.size.width / 1.8) * image.xScale), y: image.position.y)
-        self.addChild(hands)
-        hands.run(SKAction.sequence([
+        let handsAttackSequence = SKAction.sequence([
             SKAction.wait(forDuration: 0.1),
             SKAction.removeFromParent()
-        ]))
+        ])
+
+        image.run(SKAction.wait(forDuration: 0.5), completion: {() -> Void in
+            self.addChild(self.hands)
+            self.hands.run(handsAttackSequence)
+        })
 
         // attack animaton
         let attackSequence = (SKAction.sequence([
-            zombieAttackAnimation,
             SKAction.wait(forDuration: 0.5),
+            zombieAttackAnimation,
         ]))
 
         image.run(attackSequence, completion: {() -> Void in
@@ -147,6 +151,10 @@ class Zombie : SKNode {
                 self.attack()
             }
         })
+    }
+    
+    func addHands() {
+        self.addChild(hands)
     }
 
     func beHurt() {

@@ -210,19 +210,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 CGPoint(x: self.frame.size.width * 0.9 , y: 200),
                 CGFloat(545),
                 CGFloat(921),
-                true,
+                false,
             ],
             [
                 CGPoint(x: self.frame.size.width * 1.5 , y: 200),
                 CGFloat(1038),
                 CGFloat(1433),
-                false,
+                true,
             ],
             [
                 CGPoint(x: self.frame.size.width * 1.7 , y: 500),
                 CGFloat(1122),
                 CGFloat(1376),
-                false,
+                true,
             ],
         ]
 
