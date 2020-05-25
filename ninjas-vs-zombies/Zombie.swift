@@ -64,7 +64,7 @@ class Zombie : SKNode {
     func switchState(newState: states) {
         switch newState {
         case states.idle:
-            state = states.patroling
+            state = states.idle
         case states.attacking:
             state = states.attacking
         case states.patroling:
@@ -265,6 +265,7 @@ class Zombie : SKNode {
 
     func beIdle() {
         switchAnimation(value: animations.idle)
+        switchState(newState: states.idle)
 
         image.removeAllActions()
         image.size = CGSize(width: 40, height: 70)

@@ -20,6 +20,33 @@ class Ninja : SKNode {
 
     var runAnimationRunning: Bool = false
     var jumpAnimationRunning: Bool = false
+    
+    enum states {
+        case idle
+        case running
+        case jumping
+        case dying
+    }
+
+    var state = states.idle
+    
+    func switchState(newState: states) {
+        switch newState {
+        case states.idle:
+            state = states.idle
+        case states.running:
+            state = states.running
+        case states.jumping:
+            state = states.jumping
+        case states.dying:
+            state = states.dying
+        }
+    }
+
+    func verifyState(inputState: states) -> Bool {
+        return state == inputState
+    }
+    
     var jumpCount: Int = 2
 
     var defaultPosition: CGPoint!
@@ -64,11 +91,10 @@ class Ninja : SKNode {
             return
         }
 
-        jumpAnimationRunning = true
+        switchState(newState: states.jumping)
 
         image.size = CGSize(width: 60, height: 80)
         image.run(ninjaJumpAnimation, completion: {() -> Void in
-            self.jumpAnimationRunning = false
             self.beIdle()
         })
         
@@ -119,7 +145,7 @@ class Ninja : SKNode {
     }
 
     func die() {
-        runAnimationRunning = false
+        switchState(newState: states.dying)
 
         image.size = CGSize(width: 80, height: 80)
         image.run(ninjaDieAnimation, completion: {() -> Void in
@@ -131,12 +157,12 @@ class Ninja : SKNode {
     }
 
     func reset() {
-        runAnimationRunning = false
+        switchState(newState: states.idle)
         self.position = defaultPosition
     }
 
     func beIdle() {
-        runAnimationRunning = false
+        switchState(newState: states.idle)
 
         image.size = CGSize(width: 40, height: 70)
         image.run(ninjaIdleAnimation)
@@ -154,12 +180,14 @@ class Ninja : SKNode {
     }
     
     private func animateRunning() {
-        if !runAnimationRunning {
-            image.size.width = 60
-            image.run(ninjaRunAnimation)
-
-            runAnimationRunning = true
+        guard !verifyState(inputState: states.running) && !verifyState(inputState: states.jumping) else {
+            return
         }
+
+        switchState(newState: states.running)
+
+        image.size.width = 60
+        image.run(ninjaRunAnimation)
     }
     
     private func loadAnimations() {

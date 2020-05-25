@@ -83,8 +83,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         if playerHitFloor {
             self.player.resetJumpCount()
-            
-            if self.player.jumpAnimationRunning {
+
+            if self.player.verifyState(inputState: Ninja.states.jumping) {
                 self.player.beIdle()
             }
         }
