@@ -24,19 +24,31 @@ class Zombie : SKNode {
     let runningSpeed: Int = 70
     
     var lives: Int = 2
-    
-    var walkAnimationRunning: Bool = false
-    var runAnimationRunning: Bool = false
-    var hurtAnimationRunning: Bool = false
-    var attackAnimationRunning: Bool = false
-    var dieAnimationRunning: Bool = false
-    
-    var attackMode: Bool = false
+
     var hands: SKNode!
 
-    var patrolMode: Bool = false
     var leftEnd: CGFloat!
     var rightEnd: CGFloat!
+    
+    enum states {
+        case idle
+        case attacking
+        case patroling
+        case hunting
+        case dying
+    }
+    
+    enum animations {
+        case idle
+        case walking
+        case running
+        case hurting
+        case attacking
+        case dying
+    }
+
+    var state = states.idle
+    var animation = animations.idle
 
     init(position : CGPoint, leftEnd : CGFloat, rightEnd : CGFloat, patrolMode: Bool) {
         super.init()
@@ -49,6 +61,46 @@ class Zombie : SKNode {
         self.addChild(image)
     }
     
+    func switchState(newState: states) {
+        switch newState {
+        case states.idle:
+            state = states.patroling
+        case states.attacking:
+            state = states.attacking
+        case states.patroling:
+            state = states.patroling
+        case states.hunting:
+            state = states.hunting
+        case states.dying:
+            state = states.dying
+        }
+    }
+    
+    func verifyState(inputState: states) -> Bool {
+        return state == inputState
+    }
+    
+    func switchAnimation(value: animations) {
+        switch value {
+        case animations.idle:
+            animation = animations.idle
+        case animations.walking:
+            animation = animations.walking
+        case animations.running:
+            animation = animations.running
+        case animations.hurting:
+            animation = animations.hurting
+        case animations.attacking:
+            animation = animations.attacking
+        case animations.dying:
+            animation = animations.dying
+        }
+    }
+    
+    func verifyAnimation(value: animations) -> Bool {
+        return animation == value
+    }
+
     func patrol() {
         if self.xScale > 0{
             walkRight()
@@ -106,13 +158,13 @@ class Zombie : SKNode {
     }
     
     func initiatePatrolMode() {
-        attackMode = false
-        patrolMode = true
+        switchState(newState: states.patroling)
     }
-    
+
     func initiateAttackMode(facingRight: Bool) {
-        attackMode = true
-        patrolMode = false
+
+        switchState(newState: states.attacking)
+        
         if ((facingRight && self.xScale < 0) || (!facingRight && self.xScale > 0)) {
             reverseHorizontalOrientation()
         }
@@ -121,14 +173,11 @@ class Zombie : SKNode {
     }
 
     func attack() {
-        walkAnimationRunning = false
-        runAnimationRunning = false
-
-        if attackAnimationRunning == true || hurtAnimationRunning == true {
+        if verifyAnimation(value: animations.attacking) || verifyAnimation(value: animations.hurting) {
             return
         }
-
-        attackAnimationRunning = true
+        
+        switchAnimation(value: animations.attacking)
 
         // hands
         hands.position = CGPoint(x: image.position.x + (image.size.width / 1.8), y: image.position.y)
@@ -139,6 +188,10 @@ class Zombie : SKNode {
         ])
 
         image.run(SKAction.wait(forDuration: 0.5), completion: {() -> Void in
+            guard self.childNode(withName: "hands") == nil else {
+                return
+            }
+
             self.addChild(self.hands)
             self.hands.run(handsAttackSequence)
         })
@@ -150,8 +203,9 @@ class Zombie : SKNode {
         ]))
 
         image.run(attackSequence, completion: {() -> Void in
-            self.attackAnimationRunning = false
-            if self.attackMode {
+            self.beIdle()
+
+            if self.verifyState(inputState: states.attacking) {
                 self.attack()
             }
         })
@@ -166,23 +220,23 @@ class Zombie : SKNode {
             return
         }
 
-        walkAnimationRunning = false
-        runAnimationRunning = false
+        switchAnimation(value: animations.hurting)
 
         lives = lives - 1
 
         if lives == 0 {
-            patrolMode = false
+            switchState(newState: states.dying)
+
             image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
                 self.die()
             })
         } else {
             image.run(SKAction.wait(forDuration: 0.3), completion: {() -> Void in
-                guard !self.hurtAnimationRunning else {
+                guard !self.verifyAnimation(value: animations.running) else {
                     return
                 }
                 
-                self.hurtAnimationRunning = true
+                self.switchAnimation(value: animations.running)
 
                 self.image.size.width = 50
                 self.image.run(self.zombieHurtAnimation, completion: {() -> Void in
@@ -193,13 +247,11 @@ class Zombie : SKNode {
     }
 
     func die() {
-        walkAnimationRunning = false
-        runAnimationRunning = false
-
-        guard !dieAnimationRunning else {
+        guard !verifyAnimation(value: animations.dying) else {
             return
         }
-        dieAnimationRunning = true
+        
+        switchAnimation(value: animations.dying)
 
         image.removeAllActions()
         image.size.width = 70
@@ -211,15 +263,8 @@ class Zombie : SKNode {
         })
     }
 
-    func reset() {
-        walkAnimationRunning = false
-        runAnimationRunning = false
-    }
-
     func beIdle() {
-        walkAnimationRunning = false
-        runAnimationRunning = false
-        hurtAnimationRunning = false
+        switchAnimation(value: animations.idle)
 
         image.removeAllActions()
         image.size = CGSize(width: 40, height: 70)
@@ -233,33 +278,32 @@ class Zombie : SKNode {
         self.physicsBody?.categoryBitMask = Physics.physicalBodies.zombie.rawValue
         self.physicsBody?.collisionBitMask = Physics.physicalBodies.floor.rawValue
 
-        self.patrolMode = patrolMode
+        if patrolMode {
+            switchState(newState: states.patroling)
+        }
+
         self.leftEnd = leftEnd
         self.rightEnd = rightEnd
     }
 
     private func animateWalking() {
-        runAnimationRunning = false
-
-        if !walkAnimationRunning {
+        if !verifyAnimation(value: animations.walking) {
             image.size.width = 40
             image.run(zombieWalkAnimation)
 
-            walkAnimationRunning = true
+            switchAnimation(value: animations.walking)
         }
     }
     
     private func animateRunning() {
-        walkAnimationRunning = false
-
-        if !runAnimationRunning {
+        if !verifyAnimation(value: animations.running) {
             image.size.width = 50
             
             image.run(zombieRunAnimation, completion: {() -> Void in
                 self.image.run(self.zombieRunningAnimation)
             })
 
-            runAnimationRunning = true
+            switchAnimation(value: animations.running)
         }
     }
     
@@ -350,6 +394,7 @@ class Zombie : SKNode {
         hands.physicsBody?.categoryBitMask = Physics.physicalBodies.hands.rawValue
         hands.physicsBody?.contactTestBitMask = Physics.physicalBodies.player.rawValue
         hands.physicsBody?.collisionBitMask = 0
+        hands.name = "hands"
     }
 
     private func reverseHorizontalOrientation() {
