@@ -51,7 +51,7 @@ class Ninja : SKNode {
 
     var defaultPosition: CGPoint!
     
-    var lives = 3
+    var lives = 50
 
     var sword: SKNode!
 

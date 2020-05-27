@@ -181,12 +181,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (self.player.position.x >= self.frame.size.width / 2) && (self.player.position.x <= self.frame.size.width * 1.5) {
             self.cameraNode.position.x = self.player.position.x
         }
-
-        for zombie in zombies {
-            if zombie.verifyState(inputState: Zombie.states.patroling) {
-                zombie.patrol()
-            }
-        }
     }
 
     func initEnv() {
